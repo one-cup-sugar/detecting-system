@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="jquery-3.5.1.js">
+</script>
+<script src="highcharts.js">
+</script>
+<script src="highcharts-zh_CN.js">
+</script>
+<style>
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #111;
+}
+
+.active {
+    background-color: #4CAF50;
+}
+</style>
+</head>
+<body>
+<ul>
+  <li><a class="active" href="#home">流量</a></li>
+  <li><a href="process.html">进程</a></li>
+  <li><a href="socket.html">端口</a></li>
+</ul>
+<div id="container" style="min-width:400px;min-height:400px"></div>
+<script type="text/javascript">
+  // 每隔  1 秒钟 运行一次，发送一个 ajax 请求
+var DLR,ULR;
+function runEverySec() { 
+    
+    //  
+    $.ajax( {
+       "dataType" : 'text',
+       "type" : "get",
+       "url" : "rates.php",
+       "success" : function( data ) { 
+          DLR=parseInt(data.split("\t")[0]);        
+          ULR=parseInt(data.split("\t")[1]);
+          console.log(data);
+       }
+    } );
+}
+setInterval( runEverySec, 1000  ); 
+
+
+Highcharts.setOptions({
+  global: {
+    useUTC: false
+  }
+});
+function activeLastPointToolip(chart) {
+  var points = chart.series[0].points;
+  chart.tooltip.refresh(points[points.length -1]);
+}
+var chart = Highcharts.chart('container', {
+  chart: {
+    type: 'spline',
+    marginRight: 10,
+    events: {
+      load: function () {
+        var series1 = this.series[0],
+        series2 = this.series[1],
+          chart = this;
+        activeLastPointToolip(chart);
+        setInterval(function () {
+          var x = (new Date()).getTime(), // 当前时间
+            y = DLR;          // 下载速度
+          series1.addPoint([x, y], false, true);
+          y=ULR;
+          series2.addPoint([x,y],true,true);
+          activeLastPointToolip(chart);
+        }, 1000);
+      }
+    }
+  },
+  title: {
+    text: '网络实时流量监控'
+  },
+  xAxis: {
+    title: {
+      text: 'time(s)'
+    },
+    type: 'datetime',
+    tickPixelInterval: 150
+  },
+  yAxis: {
+    title: {
+      text: 'Rates(bit/s)'
+    },
+  },
+  credits:{
+     enabled: false // 禁用版权信息
+  },
+  tooltip: {
+    enabled:false
+  },
+  legend: {
+    enabled:true
+  },
+  series: [{
+    name: 'DownLoadRates',
+    data: 
+	
+	(function () {
+      // 初始化
+      var data = [],
+        time = (new Date()).getTime(),
+        i;
+      for (i = -19; i <= 0; i += 1) {
+        data.push({
+          x: time + i * 1000
+        });
+      }
+	  
+      return data;
+    }())
+  },
+  {
+    name: 'UploadRates',
+    data: (function () {
+      // 初始化
+      var data = [],
+        time = (new Date()).getTime(),
+        i;
+      for (i = -19; i <= 0; i += 1) {
+        data.push({
+          x: time + i * 1000
+        });
+      }
+      return data;
+    }())
+  }
+  ]
+});
+</script>
+</body>
+</html>

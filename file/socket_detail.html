@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="jquery-3.5.1.js">
+</script>
+</head>
+<body>
+<script>
+var socket,tmp,length;
+var htmlstr = "<table border='1px'><tr><td>Protocol</td><td>socket</td><td>Process id</td><td>Process Name</td></tr>";
+      console.log("hello");
+    $.ajax( {
+       "dataType" : 'text',
+       "type" : "get",
+       "url" : "socket.php",
+       "success" : function( data ) { 
+          socket=data.split("\n");
+          console.log(socket);
+          length=socket.length;
+          console.log(socket.length);
+          for(var i = 0; i <length-1; i++) {
+ 			tmp=socket[i].split("\t");
+ 			htmlstr += "<tr>";
+			for(var j = 0; j < 4; j++) {
+
+			
+			htmlstr += "<td >" + tmp[j] +"</td>";
+				}
+				htmlstr += "</tr>";
+				}
+
+			htmlstr += "</table>";
+ 
+			document.write(htmlstr);
+       }
+    } );
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="jquery-3.5.1.js">
+</script>
+<style>
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #111;
+}
+
+.active {
+    background-color: #4CAF50;
+}
+</style>
+</head>
+<body>
+<ul>
+  <li><a  href="rates.html">流量</a></li>
+  <li><a  href="process.html">进程</a></li>
+  <li><a class="active" href="socket.html">端口</a></li>
+</ul>
+<button type="button" onclick="refresh()">刷新端口</button>
+<iframe id="1"src="socket_detail.html" width=600 height=400 scrolling="auto"></iframe>
+<script type="text/javascript">
+    function refresh(){
+        var ts=new Date().getTime();
+        document.getElementById("1").src="socket_detail.html?_='+ts+'";
+    }
+</script>
+</body>
+</html>
